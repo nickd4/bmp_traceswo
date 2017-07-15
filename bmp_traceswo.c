@@ -59,7 +59,7 @@ found:
     int count;
     unsigned char dataUp[64];
     while (1) {
-      res = libusb_bulk_transfer(handle, ENDPOINT_UP, dataUp, sizeof(dataUp), &count, 1000);
+      res = libusb_bulk_transfer(handle, ENDPOINT_UP, dataUp, sizeof(dataUp), &count, 0);
       if (res < 0) {
         fprintf(stderr, "libusb_bulk_transfer: %s\n", libusb_strerror(res));
         if (res == LIBUSB_ERROR_NO_DEVICE)
