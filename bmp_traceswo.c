@@ -55,6 +55,14 @@ found:
       exit(1);
     }
 
+    res = libusb_claim_interface(handle, 5); // Black Magic Trace Capture
+    if (res < 0) {
+      fprintf(stderr, "libusb_claim_interface: %s\n", libusb_strerror(res));
+      if (res == LIBUSB_ERROR_NO_DEVICE)
+        goto lost_device;
+      exit(1);
+    }
+
     unsigned char ENDPOINT_UP = 0x85;
     int count;
     unsigned char dataUp[64];

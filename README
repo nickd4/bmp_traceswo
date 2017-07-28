@@ -13,6 +13,14 @@ program flow. Similarly, if the Black Magic Probe is unplugged or not found,
 the program attempts to recover by trying to re-enumerate and re-open the
 USB port once per second. Thus the program can be left running in background.
 
+Please be warned that using ITM_SendChar() will block your application, it
+is not really supposed to block (documentation states that ITM logging can be
+left in your released product, and additionally the TRACESWO pin is not flow-
+controller since the ARM has no way to know whether the output is being read),
+but it seems that TRACESWO is a special case because the ARM knows that the
+TRACESWO pin is not active except when the device is in SWD mode, so it tells
+the client that nothing is reading the ITM_SendChar() output thus blocking it.
+
 Put some code like this in your application, this is for STM32 family:
 
 /* USER CODE BEGIN PFP */
@@ -72,6 +80,7 @@ target extended-remote /dev/ttyBmpGdb
 monitor swdp_scan
 attach 1
 monitor traceswo
+set mem inaccessible-by-default off
 
 I also have this /etc/udev/rules.d/99-blackmagic.rules to create symlinks:
 SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic GDB Server", SYMLINK+="ttyBmpGdb"
