@@ -1,0 +1,12 @@
+# Black Magic Probe
+
+# there are two ACM (emulated modem) devices, one for GDB and one for UART
+# debugging, these are by default accessible by the dialout user and so we
+# only need to create symlinks for these so that we can reliably find them
+SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic GDB Server", SYMLINK+="ttyBmpGdb"
+SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic UART Port", SYMLINK+="ttyBmpTarg"
+
+# the TRACESWO is more difficult because it isn't an ACM device, it is frame
+# based and does not have a kernel driver, hence we cannot set permissions on
+# it individually, instead set the entire device to dialout so we can open it
+SUBSYSTEM=="usb", ATTRS{product}=="Black Magic Probe", GROUP="dialout"

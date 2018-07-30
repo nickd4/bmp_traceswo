@@ -81,6 +81,7 @@ found:
           goto bad_packet;
       for (int j = 0; j < count; j += 2)
         putchar(dataUp[j + 1]);
+      fflush(stdout);
       continue;
     bad_packet:
       fprintf(stderr, "bad packet:");

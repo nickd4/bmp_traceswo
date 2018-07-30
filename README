@@ -75,16 +75,29 @@ int main(void)
 
 If using STM32CubeMX put it in the USER CODE areas as demonstrated above.
 
-Remember to use the "monitor traceswo" command in gdb, I use this .gdbinit:
+Remember to use the "monitor traceswo" command in gdb, I use this ".gdbinit":
 target extended-remote /dev/ttyBmpGdb
 monitor swdp_scan
 attach 1
 monitor traceswo
 set mem inaccessible-by-default off
 
-I also have this /etc/udev/rules.d/99-blackmagic.rules to create symlinks:
+I also have this "/etc/udev/rules.d/99-blackmagic.rules" to configure the USB:
+
+# Black Magic Probe
+
+# there are two ACM (emulated modem) devices, one for GDB and one for UART
+# debugging, these are by default accessible by the dialout user and so we
+# only need to create symlinks for these so that we can reliably find them
 SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic GDB Server", SYMLINK+="ttyBmpGdb"
 SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic UART Port", SYMLINK+="ttyBmpTarg"
+
+# the TRACESWO is more difficult because it isn't an ACM device, it is frame
+# based and does not have a kernel driver, hence we cannot set permissions on
+# it individually, instead set the entire device to dialout so we can open it
+SUBSYSTEM=="usb", ATTRS{product}=="Black Magic Probe", GROUP="dialout"
+
+I have placed a copy of the above in the repository as "99-blackmagic.rules".
 
 Thanks a lot to the following site maintained by Kornelius Rohmeyer:
 http://algorithm-forge.com/techblog/2009/12/using-libusb-to-write-a-linux-usb-driver-for-the-arexx-tl-500-part-i/
